@@ -1,0 +1,22 @@
+export const TOPICS = [
+  { name: "Algae (Phycology)", icon: "🌊" },
+  { name: "Angiosperms", icon: "🌸" },
+  { name: "Bioinformatics", icon: "💻" },
+  { name: "Biochemistry", icon: "🧪" },
+  { name: "Bryophytes", icon: "🌱" },
+  { name: "Economic Botany", icon: "💰" },
+  { name: "Ecology & Evolution", icon: "🌎" },
+  { name: "Ethnobotany", icon: "🏺" },
+  { name: "Fungi (Mycology)", icon: "🍄" },
+  { name: "Genetics", icon: "🧬" },
+  { name: "Gymnosperms", icon: "🌲" },
+  { name: "Microbiology", icon: "🧫" },
+  { name: "Molecular Biology", icon: "🔬" },
+  { name: "Palynology", icon: "🌾" },
+  { name: "Plant Anatomy", icon: "🌿" },
+  { name: "Plant Biotechnology", icon: "⚙️" },
+  { name: "Plant Pathology", icon: "🍂" },
+  { name: "Plant Physiology", icon: "💧" },
+  { name: "Plant Taxonomy", icon: "🏷️" },
+  { name: "Pteridophytes", icon: "🌿" }
+];
