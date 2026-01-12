@@ -121,8 +121,7 @@ export default function JarvisGateway({ user }: JarvisGatewayProps) {
           animate={{ opacity: 1, x: 0 }}
           className="mb-12"
         >
-          <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight">
-            Greetings, {userName.split('')[0]}<br/>
+          <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight">           
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">
               Select Research Mode
             </span>
