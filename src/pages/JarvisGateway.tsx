@@ -3,20 +3,28 @@ import { Canvas } from '@react-three/fiber';
 import { Environment, ContactShadows } from '@react-three/drei';
 import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion'; 
+import type { User } from '@supabase/supabase-js';
 import { 
   Microscope, 
-  GraduationCap, 
   Trophy, 
   Globe2, 
   ArrowLeft, 
   Sparkles,
   BookOpen,
+  LogOut, // Added for a sign-out button
   type LucideIcon 
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../supabase'; // Import your supabase client
 
 import BackgroundAIModel from '../components/BackgroundAIModel';
 
+// 1. Props Interface
+interface JarvisGatewayProps {
+  user: User | null;
+}
+
+// 2. Modes Configuration
 interface Mode {
   id: string;
   title: string;
@@ -26,75 +34,36 @@ interface Mode {
   path: string; 
 }
 
-// --- UPDATED MODES FOR NEW SYSTEM ---
 const MODES: Mode[] = [
-  { 
-    id: 'careers', 
-    title: "Career Specialist", 
-    desc: "MSc/PhD & Industry India", 
-    icon: Microscope, 
-    color: "from-emerald-500 to-teal-400", 
-    path: "/careers" // Points to CareerHub.tsx
-  },
-  { 
-    id: 'abroad', 
-    title: "Scholarship Guide", 
-    desc: "German DAAD & Global PhD", 
-    icon: Globe2, 
-    color: "from-blue-500 to-cyan-400", 
-    path: "/abroad-hub" // Points to AbroadHub.tsx (to be made)
-  },
-  { 
-    id: 'quiz', 
-    title: "Knowledge Quiz", 
-    desc: "10-Question Skill Test", 
-    icon: Trophy, 
-    color: "from-amber-500 to-orange-400", 
-    path: "/quiz" // Points to BotanyQuiz.tsx
-  },
-  { 
-    id: 'study-plan', 
-    title: "Neural Study Plan", 
-    desc: "Productivity & Habits", 
-    icon: BookOpen, 
-    color: "from-purple-500 to-pink-400", 
-    path: "/study-hub" // Points to StudyHub.tsx (to be made)
-  }
+  { id: 'careers', title: "Career Specialist", desc: "MSc/PhD & Industry India", icon: Microscope, color: "from-emerald-500 to-teal-400", path: "/careers" },
+  { id: 'abroad', title: "Scholarship Guide", desc: "German DAAD & Global PhD", icon: Globe2, color: "from-blue-500 to-cyan-400", path: "/abroad-hub" },
+  { id: 'quiz', title: "Knowledge Quiz", desc: "10-Question Skill Test", icon: Trophy, color: "from-amber-500 to-orange-400", path: "/quiz" },
+  { id: 'study-plan', title: "Neural Study Plan", desc: "Productivity & Habits", icon: BookOpen, color: "from-purple-500 to-pink-400", path: "/study-hub" }
 ];
 
+// 3. Animation Variants
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { 
-      staggerChildren: 0.2, 
-      delayChildren: 3.0 
-    },
-  },
+  visible: { opacity: 1, transition: { staggerChildren: 0.2, delayChildren: 1.0 } }, // Reduced delay for better feel
 };
 
 const cardVariants: Variants = {
-  hidden: { 
-    opacity: 0, 
-    y: 30, 
-    scale: 0.95, 
-    filter: "blur(15px)" 
-  },
-  visible: { 
-    opacity: 1, 
-    y: 0, 
-    scale: 1, 
-    filter: "blur(0px)",
-    transition: { 
-      type: "spring", 
-      damping: 20, 
-      stiffness: 80 
-    }
-  },
+  hidden: { opacity: 0, y: 30, scale: 0.95, filter: "blur(15px)" },
+  visible: { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", transition: { type: "spring", damping: 20, stiffness: 80 } },
 };
 
-export default function JarvisGateway() {
+// 4. Main Component
+export default function JarvisGateway({ user }: JarvisGatewayProps) {
   const navigate = useNavigate();
+
+  // Logic to handle sign out
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    navigate('/');
+  };
+
+  // Get user name from Google Metadata
+  const userName = user?.user_metadata?.full_name || "Guest Researcher";
 
   return (
     <div className="relative min-h-screen bg-[#020617] overflow-hidden flex flex-col">
@@ -104,7 +73,6 @@ export default function JarvisGateway() {
         <Canvas camera={{ position: [0, 0, 5], fov: 45 }}>
           <ambientLight intensity={0.5} />
           <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={2} color="#10b981" />
-          
           <Suspense fallback={null}>
             <BackgroundAIModel />
             <Environment preset="city" />
@@ -121,7 +89,6 @@ export default function JarvisGateway() {
         <motion.nav 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 2.5 }}
           className="flex items-center justify-between mb-8 pt-4"
         >
           <button 
@@ -131,11 +98,20 @@ export default function JarvisGateway() {
             <ArrowLeft size={20} className="text-white group-hover:-translate-x-1 transition-transform" />
           </button>
           
-          <div className="text-right">
-            <h1 className="text-2xl font-black text-white tracking-tighter italic uppercase">
-              JARVIS <span className="text-emerald-500 underline decoration-double underline-offset-4">LABS</span>
-            </h1>
-            <p className="text-[10px] font-bold text-emerald-500/50 uppercase tracking-[0.3em]">Protocol Selection</p>
+          <div className="flex items-center gap-4">
+             <div className="text-right">
+                <h1 className="text-2xl font-black text-white tracking-tighter italic uppercase">
+                  JARVIS <span className="text-emerald-500 underline decoration-double underline-offset-4">LABS</span>
+                </h1>
+                <p className="text-[10px] font-bold text-emerald-500/50 uppercase tracking-[0.3em]">
+                  {user ? `Active: ${userName}` : "Protocol Selection"}
+                </p>
+             </div>
+             {user && (
+               <button onClick={handleSignOut} className="p-2 text-white/50 hover:text-red-400 transition-colors">
+                 <LogOut size={18} />
+               </button>
+             )}
           </div>
         </motion.nav>
 
@@ -143,13 +119,12 @@ export default function JarvisGateway() {
         <motion.div 
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 2.8 }}
           className="mb-12"
         >
           <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight">
-            Initialize<br/>
+            Greetings, {userName.split('')[0]}<br/>
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">
-              Research Mode
+              Select Research Mode
             </span>
           </h2>
           <div className="h-1 w-16 bg-emerald-500 mt-6 rounded-full" />
@@ -166,11 +141,7 @@ export default function JarvisGateway() {
             <motion.button
               key={mode.id}
               variants={cardVariants}
-              whileHover={{ 
-                scale: 1.02, 
-                y: -5,
-                backgroundColor: "rgba(255, 255, 255, 0.03)" 
-              }}
+              whileHover={{ scale: 1.02, y: -5, backgroundColor: "rgba(255, 255, 255, 0.03)" }}
               whileTap={{ scale: 0.98 }}
               onClick={() => navigate(mode.path)} 
               className="group relative overflow-hidden p-6 bg-transparent backdrop-blur-md border border-white/10 rounded-[2.5rem] text-left hover:border-emerald-500/40 transition-all duration-500"
@@ -188,8 +159,6 @@ export default function JarvisGateway() {
                   <p className="text-sm text-slate-300/80 mt-1 leading-tight">{mode.desc}</p>
                 </div>
               </div>
-              
-              <div className="absolute inset-0 border border-white/5 rounded-[2.5rem] pointer-events-none" />
               <div className={`absolute -right-6 -bottom-6 w-32 h-32 bg-gradient-to-br ${mode.color} blur-[60px] opacity-0 group-hover:opacity-20 transition-opacity duration-700`} />
             </motion.button>
           ))}

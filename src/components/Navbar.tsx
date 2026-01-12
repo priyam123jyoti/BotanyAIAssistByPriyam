@@ -1,9 +1,26 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Leaf, ChevronDown, Globe } from 'lucide-react'; // Swapped LayoutGrid for Leaf
+import { Leaf, ChevronDown, Globe } from 'lucide-react';
+import { supabase } from '../supabase'; //
+import { useAuth } from '../contexts/AuthProvider'; //
 
 export default function Navbar() {
   const [activeTab, setActiveTab] = useState('Home');
+  const { user } = useAuth(); //
+
+  // The login/logout function
+  const handleAuth = async () => {
+    if (user) {
+      await supabase.auth.signOut(); //
+    } else {
+      await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin + '/jarvis-gateway', //
+        },
+      });
+    }
+  };
 
   const navLinks = [
     { name: 'Home', hasDropdown: false },
@@ -16,9 +33,8 @@ export default function Navbar() {
   return (
     <nav className="w-full flex items-center justify-between px-8 py-6 bg-transparent font-sans relative z-50">
       
-      {/* 1. Left Side: Botanical Logo */}
+      {/* 1. Left Side: Botanical Logo (UNTOUCHED) */}
       <div className="flex items-center gap-2 cursor-pointer group">
-        {/* Animated Leaf Icon */}
         <div className="p-2 bg-emerald-100 rounded-xl group-hover:bg-emerald-200 transition-colors">
           <Leaf className="text-emerald-700" size={24} />
         </div>
@@ -32,10 +48,8 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* 2. Center: The "Greenhouse" Glass Pill Menu */}
+      {/* 2. Center: The "Greenhouse" Glass Pill Menu (UNTOUCHED) */}
       <div className="hidden md:flex items-center bg-white/60 backdrop-blur-xl px-1.5 py-1.5 rounded-full shadow-lg shadow-emerald-100/50 border border-emerald-100/50">
-        
-        {/* Main Links */}
         {navLinks.map((link) => (
           <button
             key={link.name}
@@ -44,7 +58,6 @@ export default function Navbar() {
               activeTab === link.name ? 'text-white' : 'text-emerald-800 hover:text-emerald-600'
             }`}
           >
-            {/* The "Sliding" Emerald Background */}
             {activeTab === link.name && (
               <motion.div
                 layoutId="nav-pill"
@@ -53,18 +66,13 @@ export default function Navbar() {
                 style={{ zIndex: -1 }} 
               />
             )}
-            
             <span className="flex items-center gap-1 z-10 relative">
               {link.name}
               {link.hasDropdown && <ChevronDown size={14} className={activeTab === link.name ? "text-emerald-100" : "text-emerald-400"} />}
             </span>
           </button>
         ))}
-
-        {/* Separator Line (Subtle Green) */}
         <div className="w-px h-5 bg-emerald-200/50 mx-2"></div>
-
-        {/* Language Selector */}
         <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-emerald-800 hover:bg-emerald-50 rounded-full transition-colors">
           <Globe size={16} className="text-emerald-600" />
           <span>EN</span>
@@ -72,13 +80,13 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* 3. Right Side: Premium Action Button */}
+      {/* 3. Right Side: Premium Action Button (STYLING KEPT, LOGIC UPDATED) */}
       <div>
         <button
-          onClick={() => alert("Authentication Not Available. Authentication and other backend will coming soon😊")}
+          onClick={handleAuth} // SWAPPED alert for handleAuth
           className="bg-emerald-900 text-emerald-50 text-sm font-medium px-6 py-2.5 rounded-full shadow-lg shadow-emerald-900/20 border border-emerald-800 transition-all duration-300 ease-in-out hover:bg-emerald-800 hover:scale-105 hover:shadow-xl hover:shadow-emerald-900/30 cursor-pointer flex items-center gap-2"
         >
-          Login / Register
+          {user ? 'Logout' : 'Login / Register'}
         </button>
       </div>
 

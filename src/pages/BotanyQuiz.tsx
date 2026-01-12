@@ -1,14 +1,21 @@
-import React, { useState } from 'react'; // Removed unused useCallback
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { generateMoanaQuiz } from '../services/moanaAI';
+import { supabase } from '../supabase'; // Import for future score saving
+import type { User } from '@supabase/supabase-js';
 
-// Import our new optimized components
+// Import our optimized components
 import { TopicSelection } from '../components/quiz/TopicSelection';
 import { QuizInterface } from '../components/quiz/QuizInterface';
 import { ResultsModal } from '../components/quiz/ResultsModal';
 import { LoadingScreen } from '../components/quiz/LoadingScreen';
 
-export default function BotanyQuiz() {
+// 1. Define Props to accept the logged-in user
+interface BotanyQuizProps {
+  user: User | null;
+}
+
+export default function BotanyQuiz({ user }: BotanyQuizProps) {
   const navigate = useNavigate();
 
   // --- STATE MANAGEMENT ---
@@ -20,6 +27,9 @@ export default function BotanyQuiz() {
   const [showResultsModal, setShowResultsModal] = useState(false);
   const [isRecapMode, setIsRecapMode] = useState(false);
 
+  // Get user's first name for a personalized Jarvis feel
+  const researcherName = user?.user_metadata?.full_name?.split(' ')[0] || "Researcher";
+
   // --- CORE LOGIC ---
   const startQuiz = async (topic: string) => {
     setLoading(true);
@@ -29,28 +39,27 @@ export default function BotanyQuiz() {
       if (data && data.length > 0) {
         setQuestions(data);
         setCurrentIdx(0);
-        // Reset answers for the new round
         setUserAnswers(new Array(data.length).fill(-1));
         setIsRecapMode(false);
         setShowResultsModal(false);
       }
     } catch (err) {
       console.error(err);
-      alert("Neural Link Failed. Check your connection.");
+      alert("🚨 NEURAL LINK ERROR: Could not fetch botany data.");
       setSelectedTopic(null);
     } finally {
       setLoading(false);
     }
   };
 
-  // NEW: This function handles the "Next Round" button
   const handleRestart = () => {
     if (selectedTopic) {
-      startQuiz(selectedTopic); // Re-runs the quiz with the SAME topic
+      startQuiz(selectedTopic);
     }
   };
 
   const handleAnswer = (optionIndex: number) => {
+    if (isRecapMode) return; // Prevent changing answers during review
     const updatedAnswers = [...userAnswers];
     updatedAnswers[currentIdx] = optionIndex;
     setUserAnswers(updatedAnswers);
@@ -68,17 +77,24 @@ export default function BotanyQuiz() {
     return <LoadingScreen topic={selectedTopic} />;
   }
 
+  // Topic Selection Screen (Entry Point)
   if (!selectedTopic) {
     return (
-      <TopicSelection
-        onStart={startQuiz}
-        onBack={() => navigate('/jarvis-gateway')}
-      />
+      <div className="min-h-screen bg-[#020617]">
+        <div className="absolute top-6 right-6 z-50 text-emerald-500/50 font-mono text-xs uppercase tracking-widest">
+          Operator: {researcherName}
+        </div>
+        <TopicSelection
+          onStart={startQuiz}
+          onBack={() => navigate('/jarvis-gateway')}
+        />
+      </div>
     );
   }
 
+  // Quiz & Results Screen
   return (
-    <>
+    <div className="min-h-screen bg-[#020617] text-white">
       <QuizInterface
         question={questions[currentIdx]}
         currentIdx={currentIdx}
@@ -100,9 +116,9 @@ export default function BotanyQuiz() {
             setCurrentIdx(0);
           }}
           onTerminate={() => navigate('/jarvis-gateway')}
-          onRestart={handleRestart} // <--- ADD THIS LINE HERE
+          onRestart={handleRestart}
         />
       )}
-    </>
+    </div>
   );
 }
