@@ -66,7 +66,7 @@ export default function AIFloatingButton() {
             Research AI
           </span>
           <span className="text-sm font-medium text-slate-200">
-            Meet Jarvis
+            Meet Moana
           </span>
         </div>
 

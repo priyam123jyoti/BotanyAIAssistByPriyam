@@ -44,15 +44,15 @@ export const QuizInterface = ({
     }
 
     if (isSelected) return "border-emerald-400 bg-emerald-400/10 text-emerald-50 shadow-[0_0_15px_rgba(52,211,153,0.2)] scale-[1.02]";
-    return "border-white/10 hover:bg-emerald-500/5 hover:border-emerald-500/30 text-slate-300";
+    return "border-slate-400 border-[0.2px] hover:bg-emerald-500/5 hover:border-emerald-500/30 text-slate-300";
   };
 
   return (
     <div className="min-h-screen bg-[#020617] p-6 flex items-center justify-center font-mono selection:bg-emerald-500/30">
       {/* Subtle Background Glow */}
-      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-emerald-500/5 blur-[120px] pointer-events-none rounded-full" />
+      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-emerald-500/5 blur-[120px] pointer-events-none rounded-[1rem]" />
 
-      <div className="max-w-3xl w-full bg-slate-900/40 border border-emerald-500/10 rounded-[2.5rem] p-8 md:p-12 relative shadow-2xl backdrop-blur-xl overflow-hidden">
+      <div className="max-w-3xl w-full bg-slate-900/40 border border-emerald-500/10 rounded-[1rem] p-8 md:p-12 relative shadow-2xl backdrop-blur-xl overflow-hidden">
         
         {/* PROGRESS BAR */}
         <div className="absolute top-0 left-0 w-full h-1 bg-white/5">
@@ -96,10 +96,10 @@ export const QuizInterface = ({
               key={i}
               disabled={isRecap}
               onClick={() => onAnswer(i)}
-              className={`w-full p-5 rounded-2xl border text-left text-sm font-medium transition-all duration-300 flex justify-between items-center group ${getOptionStyle(i)}`}
+              className={`w-full p-5 rounded-[1rem] border text-left text-sm font-medium transition-all duration-300 flex justify-between items-center group ${getOptionStyle(i)}`}
             >
               <div className="flex items-center gap-4">
-                <span className={`text-[10px] font-bold uppercase tracking-widest w-7 h-7 rounded-lg flex items-center justify-center border transition-colors ${userAnswer === i ? 'border-emerald-400 bg-emerald-400 text-slate-950' : 'border-white/10 text-emerald-500/50'}`}>
+                <span className={`text-[10px] font-bold uppercase tracking-widest w-7 h-7 rounded-sm flex items-center justify-center border transition-colors ${userAnswer === i ? 'border-emerald-400 bg-emerald-400 text-slate-950' : 'border-white/10 text-emerald-500/50'}`}>
                   {String.fromCharCode(65 + i)}
                 </span>
                 <span className="leading-tight">{opt}</span>
@@ -121,10 +121,10 @@ export const QuizInterface = ({
             <motion.div 
               initial={{ opacity: 0, y: 10 }} 
               animate={{ opacity: 1, y: 0 }} 
-              className="p-6 bg-emerald-950/20 rounded-2xl border border-emerald-500/20 text-[12px] text-emerald-100/80 mb-8 leading-relaxed shadow-inner"
+              className="p-6 bg-emerald-950/20 rounded-sm border border-emerald-500/20 text-[12px] text-emerald-100/80 mb-8 leading-relaxed shadow-inner"
             >
               <span className="text-emerald-400 font-black tracking-[0.3em] uppercase text-[9px] block mb-2 flex items-center gap-2">
-                <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping"/> AI Botanical Analysis
+                <div className="w-1.5 h-1.5 bg-emerald-500 rounded-sm animate-ping"/> AI Botanical Analysis
               </span> 
               {question.explanation || "System analysis complete. No further anomalies detected in this node."}
             </motion.div>
@@ -144,7 +144,7 @@ export const QuizInterface = ({
           {currentIdx === totalQuestions - 1 ? (
             <button 
               onClick={onFinish} 
-              className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-10 py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.3em] shadow-[0_0_30px_rgba(16,185,129,0.2)] hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
+              className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-10 py-4 rounded-sm font-black text-[10px] uppercase tracking-[0.3em] shadow-[0_0_30px_rgba(16,185,129,0.2)] hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
             >
               {isRecap ? "Terminate Review" : "Finalize Sync"} <ChevronRight size={14} />
             </button>

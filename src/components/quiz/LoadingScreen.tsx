@@ -26,10 +26,10 @@ export const LoadingScreen = ({ topic }: Props) => (
     </div>
 
     <h2 className="mt-12 text-xl font-black text-white tracking-widest uppercase">
-      Accessing Neural Link
+      Hi, Genius are you ready?
     </h2>
-    <p className="mt-2 text-xs text-sky-500/70 font-bold tracking-[0.3em] uppercase animate-pulse">
+    <p className="mt-2 text-xs text-sky-500/70 font-bold flex justify-center items-center w-full text-center tracking-[0.3em] uppercase animate-pulse">
       Generating {topic || "Module"} Protocol...
     </p>
   </div>
-);
+); 

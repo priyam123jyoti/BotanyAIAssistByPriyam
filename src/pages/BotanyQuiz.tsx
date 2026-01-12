@@ -1,6 +1,6 @@
 import React, { useState } from 'react'; // Removed unused useCallback
 import { useNavigate } from 'react-router-dom';
-import { generateBotanyQuiz } from '../services/jarvisAI';
+import { generateMoanaQuiz } from '../services/moanaAI';
 
 // Import our new optimized components
 import { TopicSelection } from '../components/quiz/TopicSelection';
@@ -25,7 +25,7 @@ export default function BotanyQuiz() {
     setLoading(true);
     setSelectedTopic(topic);
     try {
-      const data = await generateBotanyQuiz(topic);
+      const data = await generateMoanaQuiz(topic);
       if (data && data.length > 0) {
         setQuestions(data);
         setCurrentIdx(0);
@@ -57,7 +57,7 @@ export default function BotanyQuiz() {
   };
 
   const scorePercentage = Math.round(
-    (userAnswers.reduce((score, ans, idx) => 
+    (userAnswers.reduce((score, ans, idx) =>
       ans === questions[idx]?.correct ? score + 1 : score, 0
     ) / (questions.length || 10)) * 100
   );
@@ -70,16 +70,16 @@ export default function BotanyQuiz() {
 
   if (!selectedTopic) {
     return (
-      <TopicSelection 
-        onStart={startQuiz} 
-        onBack={() => navigate('/jarvis-gateway')} 
+      <TopicSelection
+        onStart={startQuiz}
+        onBack={() => navigate('/jarvis-gateway')}
       />
     );
   }
 
   return (
     <>
-      <QuizInterface 
+      <QuizInterface
         question={questions[currentIdx]}
         currentIdx={currentIdx}
         totalQuestions={questions.length}
@@ -92,7 +92,7 @@ export default function BotanyQuiz() {
       />
 
       {showResultsModal && (
-        <ResultsModal 
+        <ResultsModal
           score={scorePercentage}
           onReview={() => {
             setIsRecapMode(true);
