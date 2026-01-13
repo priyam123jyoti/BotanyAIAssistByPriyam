@@ -138,15 +138,10 @@ export default function JarvisGateway({ user }: JarvisGatewayProps) {
                 <h1 className="text-2xl font-black text-white tracking-tighter uppercase">
                   MOANA <span className="text-emerald-500 underline decoration-double underline-offset-4">V1.0</span>
                 </h1>
-                <p className="text-[10px] font-bold text-emerald-500/50 uppercase tracking-[0.3em]">
-                  {user ? `Active: ${userName}` : "Protocol Selection"}
+                <p className="text-[14px] font-bolder text-slate-200 uppercase tracking-[0.3em]">
+                  {user ? `HI ${userName}` : "Protocol Selection"}
                 </p>
              </div>
-             {user && (
-               <button onClick={handleSignOut} className="p-2 text-white/50 hover:text-red-400 transition-colors">
-                 <LogOut size={18} />
-               </button>
-             )}
           </div>
         </motion.nav>
 

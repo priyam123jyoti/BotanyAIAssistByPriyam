@@ -21,8 +21,8 @@ export const ResultsModal = ({ score, onReview, onTerminate, onRestart }: Result
   // 🧠 Ego-Boosting Rank Data
   const getRankData = () => {
     if (score === 100) return { 
-        title: "BOTANY GOD • THE LEGEND", 
-        sub: "SUPER INTELLIGENT. STATUS: UNTOUCHABLE.",
+        title: "GOD Of Science • THE LEGEND", 
+        sub: "SUPER INTELLIGENT. STATUS: UNTOUCHABLE.🔥🔥",
         color: "text-yellow-400", 
         border: "border-yellow-500/50",
         bg: "bg-yellow-400/10",
@@ -30,14 +30,14 @@ export const ResultsModal = ({ score, onReview, onTerminate, onRestart }: Result
     };
     if (score >= 80) return { 
         title: "ELITE SCHOLAR", 
-        sub: "SQUAD LEADER STATUS. PERFECTION IS WITHIN REACH.",
+        sub: "Booyeah. The Ultimate Pro",
         color: "text-emerald-400", 
         border: "border-emerald-500/50",
         bg: "bg-emerald-400/10",
         glow: "shadow-[0_0_50px_rgba(16,185,129,0.3)]"
     };
     if (score >= 70) return { 
-        title: "BOTANY PRO", 
+        title: "PROFESSIONAL", 
         sub: "ALMOST INTELLIGENT. TOO CLOSE TO QUIT NOW, RIGHT?",
         color: "text-cyan-400", 
         border: "border-cyan-500/40",
@@ -45,8 +45,8 @@ export const ResultsModal = ({ score, onReview, onTerminate, onRestart }: Result
         glow: "shadow-[0_0_50px_rgba(34,211,238,0.2)]"
     };
     if (score >= 60) return { 
-        title: "BOTANY EXPERT", 
-        sub: "STABLE LINK. BUT CAN YOU HANDLE A REAL CHALLENGE?",
+        title: "EXPERT", 
+        sub: "Science Buster. BUT CAN YOU HANDLE A REAL CHALLENGE?",
         color: "text-blue-400", 
         border: "border-blue-500/30",
         bg: "bg-blue-400/10",
@@ -61,8 +61,8 @@ export const ResultsModal = ({ score, onReview, onTerminate, onRestart }: Result
         glow: "shadow-[0_0_40px_rgba(99,102,241,0.2)]"
     };
     if (score >= 40) return { 
-        title: "RECON UNIT",
-        sub: "DATA INCOMPLETE. THE ECOSYSTEM IS WINNING.",
+        title: "THANOS",
+        sub: "Failure is the Shadow of Success",
         color: "text-orange-400", 
         border: "border-orange-500/20",
         bg: "bg-orange-400/10",
