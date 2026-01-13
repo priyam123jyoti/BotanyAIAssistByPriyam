@@ -4,23 +4,23 @@ import { Leaf, ChevronDown, Globe } from 'lucide-react';
 import { supabase } from '../supabase'; 
 import { useAuth } from '../contexts/AuthProvider'; 
 
-// The { user: propUser } here fixes the "Property 'user' does not exist" error in Home.tsx
 export default function Navbar({ user: propUser }: { user: any }) {
   const [activeTab, setActiveTab] = useState('Home');
   const { user: contextUser } = useAuth(); 
   
-  // This ensures the navbar knows the user state instantly from the prop
   const user = propUser || contextUser;
 
-  // The login/logout function
   const handleAuth = async () => {
     if (user) {
+      // 1. Sign out and stay on the current page
       await supabase.auth.signOut(); 
     } else {
+      // 2. Sign in and return specifically to the HOME page (root)
       await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: window.location.origin + '/jarvis-gateway', 
+          // Changed from '/jarvis-gateway' to just the base origin (Home)
+          redirectTo: window.location.origin, 
         },
       });
     }

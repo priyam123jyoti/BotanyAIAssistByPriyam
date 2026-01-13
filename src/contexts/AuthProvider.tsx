@@ -1,4 +1,3 @@
-// src/contexts/AuthProvider.tsx
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { supabase } from '../supabase';
 import type { User } from '@supabase/supabase-js';
@@ -25,17 +24,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // Attempt to get the session from Supabase
         const { data: { session }, error } = await supabase.auth.getSession();
         
-        if (error) {
-          console.error("Supabase Session Error:", error.message);
-          throw error;
-        }
+        if (error) throw error;
 
-        setUser(session?.user ?? null);
+        if (session) {
+          setUser(session.user);
+          setLoading(false); // If session exists, stop loading immediately
+        } else {
+          // 🚪 HOLD THE DOOR: 
+          // If no session is found immediately (common during Google Redirect),
+          // we wait 1 second before giving up. This prevents the "kick back to home".
+          setTimeout(() => {
+            setLoading(false);
+          }, 1000); 
+        }
       } catch (error) {
         console.error("Auth Initialization Failed:", error);
         setUser(null);
-      } finally {
-        // GUARANTEE: The "Initializing" screen disappears regardless of success or failure
         setLoading(false);
       }
     };
@@ -43,9 +47,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     initializeAuth();
 
     // Listen for real-time auth changes (Sign-in, Sign-out, Token refresh)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null);
-      setLoading(false); // Ensure loading is false when state changes
+      
+      // If a user just signed in or a session was recovered, stop loading now
+      if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
+        setLoading(false);
+      }
     });
 
     return () => {
