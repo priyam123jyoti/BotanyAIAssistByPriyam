@@ -8,7 +8,7 @@ interface TopicCardProps {
   name: string;
   icon: string;
   onClick: (topic: string) => void;
-}
+} 
 
 const TopicCard = memo(({ name, icon, onClick }: TopicCardProps) => (
   <motion.button

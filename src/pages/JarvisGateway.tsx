@@ -11,11 +11,11 @@ import {
   ArrowLeft, 
   Sparkles,
   BookOpen,
-  LogOut, // Added for a sign-out button
+  LogOut, 
   type LucideIcon 
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '../supabase'; // Import your supabase client
+import { supabase } from '../supabase'; 
 
 import BackgroundAIModel from '../components/BackgroundAIModel';
 
@@ -25,6 +25,7 @@ interface JarvisGatewayProps {
 }
 
 // 2. Modes Configuration
+// UPDATED: Added 'subjectKey' so we know which list of topics to load
 interface Mode {
   id: string;
   title: string;
@@ -32,20 +33,53 @@ interface Mode {
   icon: LucideIcon;
   color: string;
   path: string; 
+  subjectKey: string; 
 }
 
+// UPDATED: All paths now point to '/quiz', but with unique subjectKeys
 const MODES: Mode[] = [
-  { id: 'careers', title: "Physics Quiz", desc: "Time is Absolute?", icon: Microscope, color: "from-emerald-500 to-teal-400", path: "/careers" },
-  { id: 'abroad', title: "Chemistry Quiz", desc: "Do you fear exceptions?", icon: Globe2, color: "from-blue-500 to-cyan-400", path: "/abroad-hub" },
-  { id: 'quiz', title: "Botany Quiz", desc: "Not all green is Chlorophyll", icon: Trophy, color: "from-amber-500 to-orange-400", path: "/quiz" },
-  { id: 'study-plan', title: "Zoology", desc: "Adaptation is intentional", icon: BookOpen, color: "from-purple-500 to-pink-400", path: "/study-hub" }
-
+  { 
+    id: 'quizPhysics', 
+    title: "Physics Quiz", 
+    desc: "Time is Absolute?", 
+    icon: Microscope, 
+    color: "from-emerald-500 to-teal-400", 
+    path: "/quiz", 
+    subjectKey: "physics" 
+  },
+  { 
+    id: 'quizChemistry', 
+    title: "Chemistry Quiz", 
+    desc: "Do you fear exceptions?", 
+    icon: Globe2, 
+    color: "from-blue-500 to-cyan-400", 
+    path: "/quiz", 
+    subjectKey: "chemistry" 
+  },
+  { 
+    id: 'quizBotany', 
+    title: "Botany Quiz", 
+    desc: "Not all green is Chlorophyll", 
+    icon: Trophy, 
+    color: "from-amber-500 to-orange-400", 
+    path: "/quiz", 
+    subjectKey: "botany" 
+  },
+  { 
+    id: 'quizZoology', 
+    title: "Zoology Quiz", 
+    desc: "Adaptation is intentional?", 
+    icon: BookOpen, 
+    color: "from-purple-500 to-pink-400", 
+    path: "/quiz", 
+    subjectKey: "zoology" 
+  }
 ];
 
 // 3. Animation Variants
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.2, delayChildren: 1.0 } }, // Reduced delay for better feel
+  visible: { opacity: 1, transition: { staggerChildren: 0.2, delayChildren: 1.0 } }, 
 };
 
 const cardVariants: Variants = {
@@ -101,8 +135,8 @@ export default function JarvisGateway({ user }: JarvisGatewayProps) {
           
           <div className="flex items-center gap-4">
              <div className="text-right">
-                <h1 className="text-2xl font-black text-white tracking-tighter italic uppercase">
-                  MOANA <span className="text-emerald-500 underline decoration-double underline-offset-4">LABS</span>
+                <h1 className="text-2xl font-black text-white tracking-tighter uppercase">
+                  MOANA <span className="text-emerald-500 underline decoration-double underline-offset-4">V1.0</span>
                 </h1>
                 <p className="text-[10px] font-bold text-emerald-500/50 uppercase tracking-[0.3em]">
                   {user ? `Active: ${userName}` : "Protocol Selection"}
@@ -124,7 +158,7 @@ export default function JarvisGateway({ user }: JarvisGatewayProps) {
         >
           <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight">           
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">
-              Select Research Mode
+              Select Battle Mode
             </span>
           </h2>
           <div className="h-1 w-16 bg-emerald-500 mt-6 rounded-full" />
@@ -143,7 +177,13 @@ export default function JarvisGateway({ user }: JarvisGatewayProps) {
               variants={cardVariants}
               whileHover={{ scale: 1.02, y: -5, backgroundColor: "rgba(255, 255, 255, 0.03)" }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => navigate(mode.path)} 
+              // UPDATED: Navigate with state so the Quiz page knows which subject was clicked
+              onClick={() => navigate(mode.path, { 
+                state: { 
+                  subjectKey: mode.subjectKey, 
+                  subjectTitle: mode.title 
+                } 
+              })} 
               className="group relative overflow-hidden p-6 bg-transparent backdrop-blur-md border border-white/10 rounded-[2.5rem] text-left hover:border-emerald-500/40 transition-all duration-500"
             >
               <div className="flex items-start gap-5 relative z-10">

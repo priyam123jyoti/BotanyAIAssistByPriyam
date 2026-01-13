@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { generateMoanaQuiz } from '../services/moanaAI';
 import type { User } from '@supabase/supabase-js';
 
-// Constants & Components
-import { SUBJECT_TOPICS } from '../components/quiz/constants';
+// --- FIXED IMPORTS ---
+// 1. Get the data from the constants file (Where the lists live)
+import { SUBJECT_TOPICS } from '../components/quiz/constants'; 
+// 2. Get the visual component from the Selection file
 import { TopicSelection } from '../components/quiz/TopicSelection';
+
 import { QuizInterface } from '../components/quiz/QuizInterface';
 import { ResultsModal } from '../components/quiz/ResultsModal';
 import { LoadingScreen } from '../components/quiz/LoadingScreen';
@@ -16,12 +19,15 @@ interface QuizProps {
 
 export default function Quiz({ user }: QuizProps) {
   const navigate = useNavigate();
-  const { subjectId } = useParams<{ subjectId: string }>(); // 🛰️ Detects 'physics', 'botany' etc.
+  const location = useLocation();
 
-  // --- DYNAMIC SUBJECT LOGIC ---
-  const activeSubject = subjectId || 'botany';
-  const currentTopics = SUBJECT_TOPICS[activeSubject] || SUBJECT_TOPICS.botany;
-  const subjectLabel = activeSubject.toUpperCase();
+  // --- NEW DYNAMIC SUBJECT LOGIC ---
+  // We grab 'subjectKey' from the navigation state sent by JarvisGateway
+  const subjectKey = (location.state?.subjectKey as string) || 'botany';
+  const subjectTitle = (location.state?.subjectTitle || 'Botany Quiz').toUpperCase();
+  
+  // Use the key to filter the correct list (Physics, Chem, etc.)
+  const currentTopics = SUBJECT_TOPICS[subjectKey] || SUBJECT_TOPICS.botany;
 
   // --- STATE MANAGEMENT ---
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
@@ -39,8 +45,8 @@ export default function Quiz({ user }: QuizProps) {
     setLoading(true);
     setSelectedTopic(topic);
     try {
-      // We pass both the topic AND the subject to the AI service
-      const data = await generateMoanaQuiz(topic, subjectLabel);
+      // Pass both the specific topic and the subject label to the AI
+      const data = await generateMoanaQuiz(topic, subjectTitle);
       if (data && data.length > 0) {
         setQuestions(data);
         setCurrentIdx(0);
@@ -50,7 +56,7 @@ export default function Quiz({ user }: QuizProps) {
       }
     } catch (err) {
       console.error(err);
-      alert(`🚨 NEURAL LINK ERROR: Could not sync ${subjectLabel} data.`);
+      alert(`🚨 NEURAL LINK ERROR: Could not sync ${subjectTitle} data.`);
       setSelectedTopic(null);
     } finally {
       setLoading(false);
@@ -63,18 +69,19 @@ export default function Quiz({ user }: QuizProps) {
     ) / (questions.length || 1)) * 100
   );
 
-  if (loading) return <LoadingScreen topic={`${subjectLabel}: ${selectedTopic}`} />;
+  // VIEW: LOADING
+  if (loading) return <LoadingScreen topic={`${subjectTitle}: ${selectedTopic}`} />;
 
-  // Topic Selection Screen
+  // VIEW: TOPIC SELECTION
   if (!selectedTopic) {
     return (
       <div className="min-h-screen bg-[#020617]">
         <div className="absolute top-6 right-6 z-50 text-emerald-500/50 font-mono text-[10px] uppercase tracking-widest">
-          Sector: {subjectLabel} | Op: {researcherName}
+          Sector: {subjectTitle} | Op: {researcherName}
         </div>
         <TopicSelection
-          subjectTitle={subjectLabel}
-          topics={currentTopics} // 👈 Passes the correct list (Physics topics, etc.)
+          subjectTitle={subjectTitle}
+          topics={currentTopics} 
           onStart={startQuiz}
           onBack={() => navigate('/jarvis-gateway')}
         />
@@ -82,11 +89,11 @@ export default function Quiz({ user }: QuizProps) {
     );
   }
 
-  // Quiz & Results Screen
+  // VIEW: QUIZ & RESULTS
   return (
     <div className="min-h-screen bg-[#020617] text-white">
       <QuizInterface
-        subjectLabel={subjectLabel} // 👈 Displays "PHYSICS SYNC" etc.
+        subjectLabel={subjectTitle} 
         question={questions[currentIdx]}
         currentIdx={currentIdx}
         totalQuestions={questions.length}
@@ -98,8 +105,8 @@ export default function Quiz({ user }: QuizProps) {
           updatedAnswers[currentIdx] = i;
           setUserAnswers(updatedAnswers);
         }}
-        onNext={() => setCurrentIdx(prev => prev + 1)}
-        onPrev={() => setCurrentIdx(prev => prev - 1)}
+        onNext={() => setCurrentIdx(prev => Math.min(prev + 1, questions.length - 1))}
+        onPrev={() => setCurrentIdx(prev => Math.max(prev - 1, 0))}
         onFinish={() => setShowResultsModal(true)}
       />
 

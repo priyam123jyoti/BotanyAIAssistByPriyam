@@ -2,7 +2,6 @@ import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { useAuth } from './contexts/AuthProvider'; 
 
-
 // Page Imports
 import Home from './pages/Home';
 import JarvisGateway from './pages/JarvisGateway'; 
@@ -27,7 +26,6 @@ export default function App() {
   return (
     <div className="bg-[#020617] min-h-screen selection:bg-emerald-500/30">
       <AnimatePresence mode="wait">
-        {/* The 'key' on Routes ensures smooth Framer Motion transitions between pages */}
         <Routes location={location} key={location.pathname}>
           
           {/* Public Landing Page */}
@@ -39,9 +37,12 @@ export default function App() {
             element={user ? <JarvisGateway user={user} /> : <Navigate to="/" replace />} 
           />
           
-          {/* Dynamic Quiz Engine (HS/BSc/MSc) */}
+          {/* 🚀 UPDATED QUIZ ROUTE 
+            We removed /:subjectId because the subject is now handled 
+            internally via React Router State.
+          */}
           <Route 
-            path="/quiz/:subjectId" 
+            path="/quiz" 
             element={user ? <Quiz user={user} /> : <Navigate to="/" replace />} 
           />
 
@@ -52,7 +53,6 @@ export default function App() {
           />
 
           {/* Fallback Redirects */}
-          <Route path="/quiz" element={<Navigate to="/quiz/botany" replace />} />
           <Route path="*" element={<Navigate to="/" replace />} />
 
         </Routes>
