@@ -4,9 +4,14 @@ import { Bot, Sparkles, ShieldAlert, CheckCircle2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthProvider';
 
-export default function AIFloatingButton() {
+// The { user } prop here fixes the "Property 'user' does not exist" error
+export default function AIFloatingButton({ user: propUser }: { user: any }) {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user: contextUser } = useAuth();
+  
+  // This ensures the button works whether the data comes from the prop or the context
+  const user = propUser || contextUser;
+  
   const [isDenied, setIsDenied] = useState(false);
 
   const robotColors = [
@@ -34,7 +39,6 @@ export default function AIFloatingButton() {
             exit={{ opacity: 0, scale: 0.9, y: 10 }}
             className="absolute bottom-full right-0 mb-6 w-64 p-5 bg-slate-950 border-2 border-red-500 rounded-[2rem] shadow-[0_0_50px_rgba(239,68,68,0.3)] backdrop-blur-2xl z-[110]"
           >
-            {/* Simple Header */}
             <div className="flex items-center gap-3 mb-4">
               <div className="bg-red-500/20 p-2 rounded-xl text-red-500">
                 <ShieldAlert size={20} className="animate-pulse" />
@@ -42,12 +46,10 @@ export default function AIFloatingButton() {
               <span className="text-white text-xs font-black uppercase tracking-widest">Security</span>
             </div>
 
-            {/* DIRECT MESSAGE */}
             <h3 className="text-white text-xl font-black tracking-tighter mb-4 leading-none">
               LOGIN TO USE <span className="text-red-500 uppercase">MOANA</span>
             </h3>
 
-            {/* MANUAL OK BUTTON */}
             <button
               onClick={(e) => {
                 e.stopPropagation();

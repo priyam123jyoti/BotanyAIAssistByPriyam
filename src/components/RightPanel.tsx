@@ -1,7 +1,9 @@
+// src/components/RightPanel.tsx
 import React from 'react'
 import { Download, BookOpen, Crown } from 'lucide-react'
 
-function RightPanel() {
+// Adding { user } here clears the "Property 'user' does not exist" error in Home.tsx
+function RightPanel({ user }: { user: any }) {
   return (
     <div className="h-full">
       {/* Container: Deep Midnight Green with subtle border glow */}
@@ -46,13 +48,13 @@ function RightPanel() {
 
           {/* Premium Action Button */}
           <button className="group relative w-full overflow-hidden rounded-2xl transition-all active:scale-95">
-             <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 to-teal-500 group-hover:from-emerald-500 group-hover:to-teal-400 transition-all" />
-             <div className="relative py-4 flex items-center justify-center gap-3">
-               <Download size={18} className="text-emerald-950 group-hover:animate-bounce" />
-               <span className="text-emerald-950 font-black text-xs tracking-widest">
-                 DOWNLOAD MODULE
-               </span>
-             </div>
+              <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 to-teal-500 group-hover:from-emerald-500 group-hover:to-teal-400 transition-all" />
+              <div className="relative py-4 flex items-center justify-center gap-3">
+                <Download size={18} className="text-emerald-950 group-hover:animate-bounce" />
+                <span className="text-emerald-950 font-black text-xs tracking-widest">
+                  DOWNLOAD MODULE
+                </span>
+              </div>
           </button>
         </div>
       </div>

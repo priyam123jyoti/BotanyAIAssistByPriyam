@@ -1,22 +1,26 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Leaf, ChevronDown, Globe } from 'lucide-react';
-import { supabase } from '../supabase'; //
-import { useAuth } from '../contexts/AuthProvider'; //
+import { supabase } from '../supabase'; 
+import { useAuth } from '../contexts/AuthProvider'; 
 
-export default function Navbar() {
+// The { user: propUser } here fixes the "Property 'user' does not exist" error in Home.tsx
+export default function Navbar({ user: propUser }: { user: any }) {
   const [activeTab, setActiveTab] = useState('Home');
-  const { user } = useAuth(); //
+  const { user: contextUser } = useAuth(); 
+  
+  // This ensures the navbar knows the user state instantly from the prop
+  const user = propUser || contextUser;
 
   // The login/logout function
   const handleAuth = async () => {
     if (user) {
-      await supabase.auth.signOut(); //
+      await supabase.auth.signOut(); 
     } else {
       await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: window.location.origin + '/jarvis-gateway', //
+          redirectTo: window.location.origin + '/jarvis-gateway', 
         },
       });
     }
@@ -33,7 +37,7 @@ export default function Navbar() {
   return (
     <nav className="w-full flex items-center justify-between px-8 py-6 bg-transparent font-sans relative z-50">
       
-      {/* 1. Left Side: Botanical Logo (UNTOUCHED) */}
+      {/* 1. Left Side: Botanical Logo */}
       <div className="flex items-center gap-2 cursor-pointer group">
         <div className="p-2 bg-emerald-100 rounded-xl group-hover:bg-emerald-200 transition-colors">
           <Leaf className="text-emerald-700" size={24} />
@@ -48,7 +52,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* 2. Center: The "Greenhouse" Glass Pill Menu (UNTOUCHED) */}
+      {/* 2. Center: The "Greenhouse" Glass Pill Menu */}
       <div className="hidden md:flex items-center bg-white/60 backdrop-blur-xl px-1.5 py-1.5 rounded-full shadow-lg shadow-emerald-100/50 border border-emerald-100/50">
         {navLinks.map((link) => (
           <button
@@ -80,10 +84,10 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* 3. Right Side: Premium Action Button (STYLING KEPT, LOGIC UPDATED) */}
+      {/* 3. Right Side: Premium Action Button */}
       <div>
         <button
-          onClick={handleAuth} // SWAPPED alert for handleAuth
+          onClick={handleAuth}
           className="bg-emerald-900 text-emerald-50 text-sm font-medium px-6 py-2.5 rounded-full shadow-lg shadow-emerald-900/20 border border-emerald-800 transition-all duration-300 ease-in-out hover:bg-emerald-800 hover:scale-105 hover:shadow-xl hover:shadow-emerald-900/30 cursor-pointer flex items-center gap-2"
         >
           {user ? 'Logout' : 'Login / Register'}
