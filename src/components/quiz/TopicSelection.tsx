@@ -1,10 +1,9 @@
 import React, { useState, useMemo, memo } from 'react';
 import { ArrowLeft, Search } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { TOPICS } from './constants'; // Ensure you have this file created as discussed
+import type { Topic } from './constants'; // Import the type we defined in Step 1
 
-// --- 1. SUB-COMPONENT: TOPIC CARD (MEMOIZED) ---
-// We separate this so individual cards don't re-render when the parent state changes (unless needed).
+// --- 1. SUB-COMPONENT: TOPIC CARD (STYLING PRESERVED) ---
 interface TopicCardProps {
   name: string;
   icon: string;
@@ -23,7 +22,7 @@ const TopicCard = memo(({ name, icon, onClick }: TopicCardProps) => (
     onClick={() => onClick(name)}
     className="relative p-6 bg-slate-800/50 border border-green-600/30 rounded-3xl hover:border-sky-500/50 transition-colors text-left group overflow-hidden"
   >
-    {/* Jarvis Scanline Effect on Hover */}
+    {/* Jarvis Scanline Effect */}
     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-sky-500/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
     
     <div className="text-3xl mb-3 filter drop-shadow-lg">{icon}</div>
@@ -38,24 +37,25 @@ const TopicCard = memo(({ name, icon, onClick }: TopicCardProps) => (
 
 TopicCard.displayName = 'TopicCard';
 
-// --- 2. MAIN COMPONENT ---
+// --- 2. MAIN COMPONENT (STYLING PRESERVED) ---
 interface TopicSelectionProps {
+  subjectTitle: string; // New: e.g., "PHYSICS"
+  topics: Topic[];      // New: The dynamic list
   onStart: (topic: string) => void;
   onBack: () => void;
 }
 
-export const TopicSelection = ({ onStart, onBack }: TopicSelectionProps) => {
+export const TopicSelection = ({ subjectTitle, topics, onStart, onBack }: TopicSelectionProps) => {
   const [searchQuery, setSearchQuery] = useState("");
 
-  // OPTIMIZATION: Cache the filtered list so we don't recalculate on every render
+  // Filter based on the specific topics passed in
   const filteredTopics = useMemo(() => {
-    if (!searchQuery) return TOPICS;
-    return TOPICS.filter(t => 
+    if (!searchQuery) return topics;
+    return topics.filter(t => 
       t.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
-  }, [searchQuery]);
+  }, [searchQuery, topics]);
 
-  // Animation variants for the stagger effect
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -79,7 +79,7 @@ export const TopicSelection = ({ onStart, onBack }: TopicSelectionProps) => {
               RETURN_TO_LAB
             </button>
             <h1 className="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-green-500 to-emerald-700 tracking-tighter uppercase">
-              Select Module
+              {subjectTitle} Modules
             </h1>
           </div>
 

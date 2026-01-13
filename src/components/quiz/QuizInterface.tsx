@@ -10,6 +10,7 @@ interface Question {
 }
 
 interface QuizInterfaceProps {
+  subjectLabel: string; // New: e.g., "PHYSICS"
   question: Question;
   currentIdx: number;
   totalQuestions: number;
@@ -22,6 +23,7 @@ interface QuizInterfaceProps {
 }
 
 export const QuizInterface = ({
+  subjectLabel,
   question,
   currentIdx,
   totalQuestions = 10,
@@ -68,7 +70,7 @@ export const QuizInterface = ({
           <div className="flex items-center gap-2">
             <Leaf size={14} className="text-emerald-500 animate-pulse" />
             <span className="text-[10px] font-black text-emerald-500 tracking-[0.2em] uppercase bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
-              {isRecap ? "Neural Review" : "Botanical Sync"}
+              {isRecap ? "Neural Review" : `${subjectLabel} Sync`}
             </span>
           </div>
           <span className="text-[10px] text-emerald-200/50 font-bold tracking-widest uppercase">
@@ -124,7 +126,7 @@ export const QuizInterface = ({
               className="p-6 bg-emerald-950/20 rounded-sm border border-emerald-500/20 text-[12px] text-emerald-100/80 mb-8 leading-relaxed shadow-inner"
             >
               <span className="text-emerald-400 font-black tracking-[0.3em] uppercase text-[9px] block mb-2 flex items-center gap-2">
-                <div className="w-1.5 h-1.5 bg-emerald-500 rounded-sm animate-ping"/> AI Botanical Analysis
+                <div className="w-1.5 h-1.5 bg-emerald-500 rounded-sm animate-ping"/> AI {subjectLabel} Analysis
               </span> 
               {question.explanation || "System analysis complete. No further anomalies detected in this node."}
             </motion.div>

@@ -35,10 +35,11 @@ interface Mode {
 }
 
 const MODES: Mode[] = [
-  { id: 'careers', title: "Career Specialist", desc: "MSc/PhD & Industry India", icon: Microscope, color: "from-emerald-500 to-teal-400", path: "/careers" },
-  { id: 'abroad', title: "Scholarship Guide", desc: "German DAAD & Global PhD", icon: Globe2, color: "from-blue-500 to-cyan-400", path: "/abroad-hub" },
-  { id: 'quiz', title: "Knowledge Quiz", desc: "10-Question Skill Test", icon: Trophy, color: "from-amber-500 to-orange-400", path: "/quiz" },
-  { id: 'study-plan', title: "Neural Study Plan", desc: "Productivity & Habits", icon: BookOpen, color: "from-purple-500 to-pink-400", path: "/study-hub" }
+  { id: 'careers', title: "Physics Quiz", desc: "Time is Absolute?", icon: Microscope, color: "from-emerald-500 to-teal-400", path: "/careers" },
+  { id: 'abroad', title: "Chemistry Quiz", desc: "Do you fear exceptions?", icon: Globe2, color: "from-blue-500 to-cyan-400", path: "/abroad-hub" },
+  { id: 'quiz', title: "Botany Quiz", desc: "Not all green is Chlorophyll", icon: Trophy, color: "from-amber-500 to-orange-400", path: "/quiz" },
+  { id: 'study-plan', title: "Zoology", desc: "Adaptation is intentional", icon: BookOpen, color: "from-purple-500 to-pink-400", path: "/study-hub" }
+
 ];
 
 // 3. Animation Variants
@@ -101,7 +102,7 @@ export default function JarvisGateway({ user }: JarvisGatewayProps) {
           <div className="flex items-center gap-4">
              <div className="text-right">
                 <h1 className="text-2xl font-black text-white tracking-tighter italic uppercase">
-                  JARVIS <span className="text-emerald-500 underline decoration-double underline-offset-4">LABS</span>
+                  MOANA <span className="text-emerald-500 underline decoration-double underline-offset-4">LABS</span>
                 </h1>
                 <p className="text-[10px] font-bold text-emerald-500/50 uppercase tracking-[0.3em]">
                   {user ? `Active: ${userName}` : "Protocol Selection"}

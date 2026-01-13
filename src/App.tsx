@@ -2,25 +2,23 @@ import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { useAuth } from './contexts/AuthProvider'; 
 
+
 // Page Imports
 import Home from './pages/Home';
 import JarvisGateway from './pages/JarvisGateway'; 
-import BotanyQuiz from './pages/BotanyQuiz'; 
+import Quiz from './pages/Quiz'; 
 import AIHub from './pages/AIHub'; 
 
 export default function App() {
   const location = useLocation();
-  const { user, loading } = useAuth(); // Access global auth state
+  const { user, loading } = useAuth();
 
-  // Prevent flickering by showing a loading screen while checking session
+  // 🛡️ Global Loading State (Neural Link)
   if (loading) {
     return (
       <div className="h-screen w-full bg-[#020617] flex flex-col items-center justify-center font-mono">
         <div className="text-emerald-500 text-xl animate-pulse tracking-[0.2em]">
-          INITIALIZING NEURAL LINK...
-        </div>
-        <div className="w-48 h-1 bg-white/10 mt-4 rounded-full overflow-hidden">
-          <div className="h-full bg-emerald-500 animate-progress origin-left"></div>
+          SynapSeed : Powered by Moana
         </div>
       </div>
     );
@@ -29,25 +27,33 @@ export default function App() {
   return (
     <div className="bg-[#020617] min-h-screen selection:bg-emerald-500/30">
       <AnimatePresence mode="wait">
+        {/* The 'key' on Routes ensures smooth Framer Motion transitions between pages */}
         <Routes location={location} key={location.pathname}>
           
-          {/* Public Route */}
-          <Route path="/" element={<Home />} />
+          {/* Public Landing Page */}
+          <Route path="/" element={<Home user={user} />} />
           
-          {/* Main Selection Hub - Passes user to the 3D interface */}
+          {/* Protected Laboratory Gateway */}
           <Route 
             path="/jarvis-gateway" 
-            element={<JarvisGateway user={user} />} 
+            element={user ? <JarvisGateway user={user} /> : <Navigate to="/" replace />} 
           />
           
-          {/* Protected Quiz Route - Redirects to Home if not logged in */}
+          {/* Dynamic Quiz Engine (HS/BSc/MSc) */}
           <Route 
-            path="/quiz" 
-            element={user ? <BotanyQuiz user={user} /> : <Navigate to="/" replace />} 
+            path="/quiz/:subjectId" 
+            element={user ? <Quiz user={user} /> : <Navigate to="/" replace />} 
           />
 
-          {/* AI Chat Hub */}
-          <Route path="/ai-hub" element={<AIHub />} />
+          {/* AI Career & Research Hub */}
+          <Route 
+            path="/ai-hub" 
+            element={user ? <AIHub /> : <Navigate to="/" replace />} 
+          />
+
+          {/* Fallback Redirects */}
+          <Route path="/quiz" element={<Navigate to="/quiz/botany" replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
 
         </Routes>
       </AnimatePresence>
