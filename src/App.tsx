@@ -7,6 +7,7 @@ import Home from './pages/Home';
 import JarvisGateway from './pages/JarvisGateway'; 
 import Quiz from './pages/Quiz'; 
 import AIHub from './pages/AIHub'; 
+import AffiliateStore from './pages/AffiliateStore'; // 1. Import your new page
 
 export default function App() {
   const location = useLocation();
@@ -16,8 +17,8 @@ export default function App() {
   if (loading) {
     return (
       <div className="h-screen w-full bg-[#020617] flex flex-col items-center justify-center font-mono">
-        <div className="text-emerald-500 text-xl animate-pulse tracking-[0.2em]">
-          SynapSeed : Powered by Moana
+        <div className="text-emerald-500 text-xl flex justify-center items-center text-center animate-pulse tracking-[0.2em]">
+          SynapSeed : Powered by MoanaAI
         </div>
       </div>
     );
@@ -30,6 +31,9 @@ export default function App() {
           
           {/* Public Landing Page */}
           <Route path="/" element={<Home user={user} />} />
+
+          {/* 🛒 Affiliate Store (Publicly accessible for India-wide growth) */}
+          <Route path="/books" element={<AffiliateStore />} />
           
           {/* Protected Laboratory Gateway */}
           <Route 
@@ -37,10 +41,7 @@ export default function App() {
             element={user ? <JarvisGateway user={user} /> : <Navigate to="/" replace />} 
           />
           
-          {/* 🚀 UPDATED QUIZ ROUTE 
-            We removed /:subjectId because the subject is now handled 
-            internally via React Router State.
-          */}
+          {/* 🚀 QUIZ ROUTE */}
           <Route 
             path="/quiz" 
             element={user ? <Quiz user={user} /> : <Navigate to="/" replace />} 

@@ -1,25 +1,27 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Leaf, ChevronDown, Globe } from 'lucide-react';
+import { ChevronDown, Globe } from 'lucide-react';
 import { supabase } from '../supabase'; 
 import { useAuth } from '../contexts/AuthProvider'; 
+import { useNavigate } from 'react-router-dom'; // Added for navigation
+
+// 1. Import your new premium logo
+import moanaLogo from '../assets/moana-ai-logo.png';
 
 export default function Navbar({ user: propUser }: { user: any }) {
   const [activeTab, setActiveTab] = useState('Home');
   const { user: contextUser } = useAuth(); 
+  const navigate = useNavigate(); // Initialize the navigate hook
   
   const user = propUser || contextUser;
 
   const handleAuth = async () => {
     if (user) {
-      // 1. Sign out and stay on the current page
       await supabase.auth.signOut(); 
     } else {
-      // 2. Sign in and return specifically to the HOME page (root)
       await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          // Changed from '/jarvis-gateway' to just the base origin (Home)
           redirectTo: window.location.origin, 
         },
       });
@@ -27,27 +29,37 @@ export default function Navbar({ user: propUser }: { user: any }) {
   };
 
   const navLinks = [
-    { name: 'Home', hasDropdown: false },
-    { name: 'Study Abroad', hasDropdown: false },
-    { name: 'Albums', hasDropdown: true },
-    { name: 'Career Hub', hasDropdown: false },
-    { name: 'Books', hasDropdown: false },
+    { name: 'Home', hasDropdown: false, path: '/' },
+    { name: 'Study Abroad', hasDropdown: false, path: '/study-abroad' },
+    { name: 'Albums', hasDropdown: true, path: '/albums' },
+    { name: 'Career Hub', hasDropdown: false, path: '/career' },
+    { name: 'Books', hasDropdown: false, path: '/books' },
   ];
+
+  // Handle navigation and state update
+  const handleNavigation = (name: string, path: string) => {
+    setActiveTab(name);
+    navigate(path);
+  };
 
   return (
     <nav className="w-full flex items-center justify-between px-8 py-6 bg-transparent font-sans relative z-50">
       
-      {/* 1. Left Side: Botanical Logo */}
-      <div className="flex items-center gap-2 cursor-pointer group">
-        <div className="p-2 bg-emerald-100 rounded-xl group-hover:bg-emerald-200 transition-colors">
-          <Leaf className="text-emerald-700" size={24} />
+      {/* 1. Left Side: Moana AI Premium Logo */}
+      <div onClick={() => handleNavigation('Home', '/')} className="flex items-center gap-3 cursor-pointer group">
+        <div className="p-1 rounded-xl transition-all duration-300 shadow-sm overflow-hidden">
+          <img 
+            src={moanaLogo} 
+            alt="Moana AI Logo" 
+            className="w-10 rounded h-10 object-contain mix-blend-multiply" 
+          />
         </div>
         <div className="flex flex-col leading-none">
           <span className="text-xl font-bold text-emerald-950 tracking-tight font-display">
-            Botany<span className="text-emerald-600">Rise</span>
+            Synap<span className="text-emerald-600">Seed</span>
           </span>
-          <span className="text-[10px] uppercase tracking-widest text-emerald-600/80 font-semibold">
-            Research & Nature
+          <span className="text-[10px] uppercase tracking-widest text-emerald-600/80 font-bold">
+            Powered by Moana AI
           </span>
         </div>
       </div>
@@ -57,7 +69,7 @@ export default function Navbar({ user: propUser }: { user: any }) {
         {navLinks.map((link) => (
           <button
             key={link.name}
-            onClick={() => setActiveTab(link.name)}
+            onClick={() => handleNavigation(link.name, link.path)}
             className={`relative px-5 py-2 rounded-full text-sm font-medium transition-colors duration-300 ${
               activeTab === link.name ? 'text-white' : 'text-emerald-800 hover:text-emerald-600'
             }`}
@@ -65,20 +77,27 @@ export default function Navbar({ user: propUser }: { user: any }) {
             {activeTab === link.name && (
               <motion.div
                 layoutId="nav-pill"
-                className="absolute inset-0 bg-linear-to-r from-emerald-600 to-green-600 rounded-full shadow-md shadow-emerald-200"
+                className="absolute inset-0 bg-gradient-to-r from-emerald-600 to-green-600 rounded-full shadow-md shadow-emerald-200"
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
                 style={{ zIndex: -1 }} 
               />
             )}
-            <span className="flex items-center gap-1 z-10 relative">
+            <span className="flex items-center hover:cursor-pointer gap-1 z-10 relative">
               {link.name}
-              {link.hasDropdown && <ChevronDown size={14} className={activeTab === link.name ? "text-emerald-100" : "text-emerald-400"} />}
+              {link.hasDropdown && (
+                <ChevronDown 
+                  size={14} 
+                  className={activeTab === link.name ? "text-emerald-100" : "text-emerald-400"} 
+                />
+              )}
             </span>
           </button>
         ))}
+        
         <div className="w-px h-5 bg-emerald-200/50 mx-2"></div>
-        <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-emerald-800 hover:bg-emerald-50 rounded-full transition-colors">
-          <Globe size={16} className="text-emerald-600" />
+        
+        <button className="flex hover:cursor-pointer items-center gap-2 px-4 py-2 text-sm font-medium text-emerald-800 hover:bg-emerald-50 rounded-full transition-colors">
+          <Globe size={16} className="text-emerald-600 " />
           <span>EN</span>
           <ChevronDown size={14} className="opacity-50" />
         </button>
@@ -88,9 +107,9 @@ export default function Navbar({ user: propUser }: { user: any }) {
       <div>
         <button
           onClick={handleAuth}
-          className="bg-emerald-900 text-emerald-50 text-sm font-medium px-6 py-2.5 rounded-full shadow-lg shadow-emerald-900/20 border border-emerald-800 transition-all duration-300 ease-in-out hover:bg-emerald-800 hover:scale-105 hover:shadow-xl hover:shadow-emerald-900/30 cursor-pointer flex items-center gap-2"
+          className="bg-emerald-900 text-emerald-50 text-sm font-semibold px-8 py-2.5 rounded-full shadow-lg shadow-emerald-900/20 border border-emerald-800 transition-all duration-300 ease-in-out hover:bg-emerald-800 hover:scale-105 hover:shadow-xl hover:shadow-emerald-900/30 cursor-pointer flex items-center gap-2 active:scale-95"
         >
-          {user ? 'Logout' : 'Login / Register'}
+          {user ? 'Logout' : 'Login'}
         </button>
       </div>
 

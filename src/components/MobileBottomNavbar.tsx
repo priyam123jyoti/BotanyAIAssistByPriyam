@@ -1,17 +1,25 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Home, Globe, Image, Briefcase, BookOpen } from 'lucide-react';
+import { useNavigate } from 'react-router-dom'; // Added for navigation
 
 export default function MobileBottomNavbar() {
   const [active, setActive] = useState('Home');
+  const navigate = useNavigate(); // Initialize navigation
 
   const tabs = [
-    { name: 'Home', icon: Home },
-    { name: 'Study Abroad', icon: Globe },
-    { name: 'Albums', icon: Image },
-    { name: 'Career Hub', icon: Briefcase },
-    { name: 'Books', icon: BookOpen },
+    { name: 'Home', icon: Home, path: '/' },
+    { name: 'Study Abroad', icon: Globe, path: '/study-abroad' },
+    { name: 'Albums', icon: Image, path: '/albums' },
+    { name: 'Career Hub', icon: Briefcase, path: '/career' },
+    { name: 'Books', icon: BookOpen, path: '/books' },
   ];
+
+  // Combined function for state and navigation
+  const handleTabClick = (name: string, path: string) => {
+    setActive(name);
+    navigate(path);
+  };
 
   return (
     <div className="md:hidden fixed bottom-2 left-0 right-0 px-6 z-[100]">
@@ -24,7 +32,7 @@ export default function MobileBottomNavbar() {
           return (
             <button
               key={tab.name}
-              onClick={() => setActive(tab.name)}
+              onClick={() => handleTabClick(tab.name, tab.path)}
               className="relative flex flex-col items-center justify-center w-12 h-10 transition-colors duration-300"
             >
               {/* Active Background Glow */}
